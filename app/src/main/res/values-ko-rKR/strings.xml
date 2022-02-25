@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">test</string>
+    <string name="me">t2</string>
+    <string name="you">너</string>
+    <string name="result">결과보기</string>
+    <string name="birthday">생년월일 (*필수)</string>
+    <string name="mbti">t3(*선택)</string>
+    <string name="ph_date">19890101</string>
+    <string name="extraversion">E</string>
+    <string name="introversion">I</string>
+    <string name="sensing">S</string>
+    <string name="intuition">N</string>
+    <string name="thinking">T</string>
+    <string name="feeling">F</string>
+    <string name="judging">J</string>
+    <string name="perceiving">P</string>
+    <string name="aries">양자리</string>
+    <string name="taurus">황소자리</string>
+    <string name="gemini">쌍둥이자리</string>
+    <string name="cancer">게자리</string>
+    <string name="leo">사자자리</string>
+    <string name="virgo">처녀자리</string>
+    <string name="libra">천칭자리</string>
+    <string name="scorpio">전갈자리</string>
+    <string name="sagittarius">궁수자리</string>
+    <string name="capricorn">염소자리</string>
+    <string name="aquarius">물병자리</string>
+    <string name="pisces">물고기자리</string>
+</resources>

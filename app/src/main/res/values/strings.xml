@@ -1,3 +1,29 @@
 <resources>
     <string name="app_name">OurChemi</string>
+    <string name="me">Me</string>
+    <string name="you">You</string>
+    <string name="result">Result</string>
+    <string name="birthday">Birthday(*necessary)</string>
+    <string name="mbti">MBTI(*optional)</string>
+    <string name="ph_date">19890101</string>
+    <string name="extraversion">E</string>
+    <string name="introversion">I</string>
+    <string name="sensing">S</string>
+    <string name="intuition">N</string>
+    <string name="thinking">T</string>
+    <string name="feeling">F</string>
+    <string name="judging">J</string>
+    <string name="perceiving">P</string>
+    <string name="aries">Aries</string>
+    <string name="taurus">Taurus</string>
+    <string name="gemini">Gemini</string>
+    <string name="cancer">Cancer</string>
+    <string name="leo">Leo</string>
+    <string name="virgo">Virgo</string>
+    <string name="libra">Libra</string>
+    <string name="scorpio">Scorpio</string>
+    <string name="sagittarius">Sagittarius</string>
+    <string name="capricorn">Capricorn</string>
+    <string name="aquarius">Aquarius</string>
+    <string name="pisces">Pisces</string>
 </resources>

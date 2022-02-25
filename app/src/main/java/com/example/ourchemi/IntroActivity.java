@@ -1,6 +1,5 @@
 package com.example.ourchemi;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,9 +21,7 @@ public class IntroActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent); //뒤로가기 했을 때 다시 안나오게 >>finish!!
                 finish();
-
             }
-
         },5000);
     }
 
@@ -33,5 +30,4 @@ public class IntroActivity extends AppCompatActivity {
         super.onPause();
         finish();
     }
-
 }
