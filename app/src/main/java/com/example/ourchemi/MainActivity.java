@@ -15,6 +15,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.example.ourchemi.models.DateObj;
 import com.example.ourchemi.models.Person;
 
 import java.io.Serializable;
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String FType = "F";
     public static final String JType = "J";
     public static final String PType = "P";
-    public static final int NOK = -1;
+
     public static final int CHECKED = 1;
     public static final int UNCHECKED = 0;
 
@@ -59,10 +60,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        isExtraversion = NOK;
-        isSensing = NOK;
-        isIntuition = NOK;
-        isJudging = NOK;
+        isExtraversion = Constant.NOK;
+        isSensing = Constant.NOK;
+        isIntuition = Constant.NOK;
+        isJudging = Constant.NOK;
 
         notice = (TextView) findViewById(R.id.tv_notice);
 
@@ -90,14 +91,10 @@ public class MainActivity extends AppCompatActivity {
 
                 if(pressMeBtn == true)
                 {
-                    me.year = year;
-                    me.month = month;
-                    me.day = day;
+                    me.setBirthday(new DateObj(year, month, day));
                 }
                 else{
-                    you.year = year;
-                    you.month = month;
-                    you.day = day;
+                    you.setBirthday(new DateObj(year, month, day));
                 }
                 notice.setText("MBTI를 선택하세요");
                 checkInputValidAll();
@@ -113,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         you = new Person();
         pressMeBtn = false;
 
-        if(me.completeInfo == false && you.completeInfo == false)
+        if(me.isCompleteInfo() == false && you.isCompleteInfo() == false)
         {
             notice.setText(getString(R.string.me) + " 버튼을 클릭하세요.");
         }
@@ -149,13 +146,13 @@ public class MainActivity extends AppCompatActivity {
         boolean you_valid = false;
 
         me_validate1 = checkBirthdayValidate(me);
-        if(me.mbti != "")
+        if(me.getMbti() != "")
             me_validate2 = true;
 
         me_valid = me_validate1 & me_validate2;
 
         you_validate1 = checkBirthdayValidate(you);
-        if(you.mbti != "")
+        if(you.getMbti() != "")
             you_validate2 = true;
         you_valid = you_validate1 & you_validate2;
 
@@ -181,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
     public void onClickMeBtn(View view) {
         initViewItem();
         pressMeBtn = true;
-        if(me.completeInfo == false)
+        if(me.isCompleteInfo() == false)
         {
             notice.setText("생년월일을 입력하세요.");
         }
@@ -193,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
     public void onClickYouBtn(View view) {
         initViewItem();
         pressMeBtn = false;
-        if(you.completeInfo == false)
+        if(you.isCompleteInfo() == false)
         {
             notice.setText("생년월일을 입력하세요.");
         }
@@ -203,7 +200,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public boolean checkBirthdayValidate(Person p){
-        if(p.year != NOK && p.month != NOK && p.day != NOK)
+        if(p.getBirthday().getYear() != Constant.NOK
+                && p.getBirthday().getMonth() != Constant.NOK
+                && p.getBirthday().getDay() != Constant.NOK)
             return true;
         else
             return false;
@@ -220,17 +219,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void onRadioButtonClickedAll(){
         //각 그룹에서 1개씩 체크된 상태인지 검사
-        if(isExtraversion != NOK
-            && isSensing != NOK
-            && isIntuition != NOK
-            && isJudging != NOK)
+        if(isExtraversion != Constant.NOK
+            && isSensing != Constant.NOK
+            && isIntuition != Constant.NOK
+            && isJudging != Constant.NOK)
         {
             String mbti = makeMBTI();
 
             if(pressMeBtn)
-                me.mbti = mbti;
+                me.setMbti(mbti);
             else
-                you.mbti = mbti;
+                you.setMbti(mbti);
             notice.setText("결과보기 버튼을 클릭하세요.");
             checkInputValidAll();
         }

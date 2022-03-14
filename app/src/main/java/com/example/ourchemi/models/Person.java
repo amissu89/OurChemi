@@ -1,46 +1,90 @@
 package com.example.ourchemi.models;
 
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 
 public class Person implements Serializable {
+
+    private DateObj birthday;
+    private DateObj lunarBirthday;
+    private String ddi;
+    private String gapja;
+    private String mbti;
+    private String zodiacSign;
+
+    @NonNull
+    @Override
+    public Person clone() {
+        try{
+            return (Person) super.clone();
+        }
+        catch(CloneNotSupportedException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private KZodiac kZodiac;
+    private String birthStone;
+    private String birthFlower;
+    private boolean completeInfo;
+
+    public Person(DateObj birthday, DateObj lunarBirthday, String ddi, String gapja, String mbti, String zodiacSign, KZodiac kZodiac, String birthStone, String birthFlower, boolean completeInfo) {
+        this.birthday = birthday;
+        this.lunarBirthday = lunarBirthday;
+        this.ddi = ddi;
+        this.gapja = gapja;
+        this.mbti = mbti;
+        this.zodiacSign = zodiacSign;
+        this.kZodiac = kZodiac;
+        this.birthStone = birthStone;
+        this.birthFlower = birthFlower;
+        this.completeInfo = completeInfo;
+    }
+
     public Person(){
-        year = month = day = 0;
         mbti = "";
+        completeInfo = false;
+        birthday = new DateObj();
+        lunarBirthday = new DateObj();
+        ddi = gapja = mbti = zodiacSign = "";
+        kZodiac = new KZodiac();
+        birthStone = birthFlower = "";
         completeInfo = false;
     }
 
-    public int year;
-    public int month;
-    public int day;
-    public String mbti;
-    public String zodiacSign;
-    public String kZodiacSign;
-    public String birthStone;
-    public String birthFlower;
-    public boolean completeInfo;
-
-    public int getYear() {
-        return year;
+    public DateObj getBirthday() {
+        return birthday;
     }
 
-    public void setYear(int year) {
-        this.year = year;
+    public void setBirthday(DateObj birthday) {
+        this.birthday = birthday;
     }
 
-    public int getMonth() {
-        return month;
+    public DateObj getLunarBirthday() {
+        return lunarBirthday;
     }
 
-    public void setMonth(int month) {
-        this.month = month;
+    public void setLunarBirthday(DateObj lunarBirthday) {
+        this.lunarBirthday = lunarBirthday;
     }
 
-    public int getDay() {
-        return day;
+    public String getDdi() {
+        return ddi;
     }
 
-    public void setDay(int day) {
-        this.day = day;
+    public void setDdi(String ddi) {
+        this.ddi = ddi;
+    }
+
+    public String getGapja() {
+        return gapja;
+    }
+
+    public void setGapja(String gapja) {
+        this.gapja = gapja;
     }
 
     public String getMbti() {
@@ -59,12 +103,12 @@ public class Person implements Serializable {
         this.zodiacSign = zodiacSign;
     }
 
-    public String getkZodiacSign() {
-        return kZodiacSign;
+    public KZodiac getkZodiac() {
+        return kZodiac;
     }
 
-    public void setkZodiacSign(String kZodiacSign) {
-        this.kZodiacSign = kZodiacSign;
+    public void setkZodiac(KZodiac kZodiac) {
+        this.kZodiac = kZodiac;
     }
 
     public String getBirthStone() {
@@ -91,18 +135,34 @@ public class Person implements Serializable {
         this.completeInfo = completeInfo;
     }
 
+    public void copy(Person p){
+        mbti            = p.getMbti();
+        completeInfo    = p.isCompleteInfo();
+        birthday    = p.getBirthday();
+        lunarBirthday = p.getLunarBirthday();
+        ddi = p.getDdi();
+        gapja = p.getGapja();
+        mbti = p.getMbti();
+        zodiacSign = p.getZodiacSign();
+        kZodiac = p.getkZodiac();
+        birthStone = p.getBirthStone();
+        birthFlower = p.getBirthFlower();
+    }
+
     @Override
     public String toString() {
         return "Person{" +
-                "year=" + year +
-                ", month=" + month +
-                ", day=" + day +
+                "birthday=" + birthday +
+                ", lunarBirthday=" + lunarBirthday +
+                ", ddi='" + ddi + '\'' +
+                ", gapja='" + gapja + '\'' +
                 ", mbti='" + mbti + '\'' +
                 ", zodiacSign='" + zodiacSign + '\'' +
-                ", kZodiacSign='" + kZodiacSign + '\'' +
+                ", kZodiac=" + kZodiac +
                 ", birthStone='" + birthStone + '\'' +
                 ", birthFlower='" + birthFlower + '\'' +
                 ", completeInfo=" + completeInfo +
                 '}';
     }
+
 }

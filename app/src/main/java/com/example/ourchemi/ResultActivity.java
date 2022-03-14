@@ -1,14 +1,22 @@
 package com.example.ourchemi;
 
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.ourchemi.models.DateObj;
 import com.example.ourchemi.models.Person;
 import com.example.ourchemi.models.ZodiacType;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,99 +24,174 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ResultActivity extends AppCompatActivity {
 
-    Person me;
-    Person you;
+    private Person me;
+    private Person you;
 
-    private TextView htmlDoc;
-    private String htmlContentInStringFormat;
+    private DateObj dateObj = new DateObj();
+    private String ddi;
+    private String gapja;
+
+    private TabLayout           tabLayout;
+
+    private ShowResultFragment showResultFragment;
+    private BigImageFragment bigImageFragment;
+    private WebViewFragment webViewFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
-        Person p1 = new Person();
-        p1.setYear(1989);
-        p1.setMonth(11);
-        p1.setDay(6);
-        p1.setMbti("ENFJ");
 
-        Person p2 = new Person();
-        p2.setYear(1982);
-        p2.setMonth(1);
-        p2.setDay(12);
-        p2.setMbti("INFP");
+        tabLayout = (TabLayout)findViewById(R.id.tabs);
+        ViewPager2 viewPager2 = (ViewPager2)findViewById(R.id.view_pager);
 
-        /*Intent infos = getIntent();
+        ViewPager2Adapter pagerAdapter = new ViewPager2Adapter(this);
+        viewPager2.setAdapter(pagerAdapter);
+
+        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                System.out.println("onPageSelected : " + position );
+                switch(position)
+                {
+                    case 0:
+                        showResultFragment = (ShowResultFragment) pagerAdapter.getFragment(position);
+                        showResultFragment.setPerson(me, you);
+                        System.out.println(showResultFragment.getParam());
+                        break;
+                    case 1:
+                        bigImageFragment = (BigImageFragment) pagerAdapter.getFragment(position);
+                        System.out.println(bigImageFragment.getParam());
+                        break;
+                    case 2:
+                        webViewFragment = (WebViewFragment) pagerAdapter.getFragment(position);
+                        System.out.println(webViewFragment.getParam());
+                        break;
+                    default:
+                        System.out.println("default");
+                }
+            }
+        });
+
+
+
+        final List<String> tabElement = Arrays.asList("궁합결과", "Load Image", "WebView Text");
+
+        new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
+            @Override
+            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
+                System.out.println("onConfigureTab : " + position);
+                TextView textview = new TextView(ResultActivity.this);
+                textview.setText(tabElement.get(position));
+                tab.setCustomView(textview);
+            }
+        }).attach();
+
+         /*Intent infos = getIntent();
         me = (Person)infos.getSerializableExtra("me");
         you = (Person)infos.getSerializableExtra("you");
         System.out.println(me.toString());
         System.out.println(you.toString());*/
-        getZodiac(p1);
-        System.out.println("[p1]  " + p1.getZodiacSign());
-        getZodiac(p2);
-        System.out.println("[P2]  " + p2.getZodiacSign());
 
-        JsoupAsyncTask jsoupAsyncTask = new JsoupAsyncTask();
-        jsoupAsyncTask.execute(Constant.DDI_REQ_URL, "19891106");
+        me = new Person();
+        me.setBirthday(new DateObj(1989,11,6));
+        me.setMbti("ENFJ");
 
-    }
+        you = new Person();
+        you.setBirthday(new DateObj(1985, 1, 12));
+        you.setMbti("INFP");
 
-    private class JsoupAsyncTask extends AsyncTask<String, String, Void> {
+        getZodiac(me);
+        getZodiac(you);
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
 
-        @Override
-        protected Void doInBackground(String... params) {
+        executor.execute(() -> {
             try {
-                /*
-                <article class="contents">
-                    <p>
-                        <b>양력 1989년 11월 6일</b>은<br>
-                        <b>음력 1989년 10월 8일</b>입니다.<br>
-                        <b>평달</b>이고 <b>기사(己巳)년</b>입니다.
-                    </p>
-                    <p class="blue">
-                        <a href="/cal/lunar_solar/list/1008?y=1">여기를 누르면 연도별 양력도 볼 수 있습니다.</a>
-                    </p>
-			    </article>
-                * */
-                String url = params[0] + params[1];
-                Document doc = Jsoup.connect(url).get();
-
-                Elements elems = doc.select(".contents p b");
-                for(Element elem : elems)
-                {
-                    System.out.println(elem.toString());
-                }
-
-                /*for (Element link : links) {
-                    htmlContentInStringFormat += (link.attr("abs:href")
-                            + "(" + link.text().trim() + ")\n");
-                }*/
-
+                me.copy(getKZodiac(me));
+                you.copy(getKZodiac(you));
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return null;
-        }
+            handler.post(() -> {
+                me.setCompleteInfo(true);
+                you.setCompleteInfo(true);
+                System.out.println("p1 : " + me.toString());
+                System.out.println("p2 : " + you.toString());
+            });
+        });
+    }
 
-        @Override
-        protected void onPostExecute(Void result) {
-            //htmlDoc.setText(htmlContentInStringFormat);
+    public Person getKZodiac(Person p) throws IOException {
+
+        String url = Constant.DDI_REQ_URL + p.getBirthday().toString();
+        System.out.println(url);
+        Document doc = Jsoup.connect(url).get();
+
+        Elements elems = doc.select(".contents p b");
+        for(Element elem : elems)
+        {
+            String str = elem.toString();
+            if(str.contains("음력"))
+            {
+                System.out.println(elem.toString());
+                Pattern pattern = Pattern.compile("\\d+");
+                Matcher matcher = pattern.matcher(elem.toString());
+                int cnt = 0;
+                while(matcher.find()){
+                    int val = Integer.parseInt(matcher.group(0));
+                    if(cnt == 0){
+                        dateObj.setYear(val);
+                    }
+                    else if(cnt == 1){
+                        dateObj.setMonth(val);
+                    }
+                    else if(cnt == 2){
+                        dateObj.setDay(val);
+                        p.setLunarBirthday(dateObj);
+                    }
+                    cnt++;
+
+                }
+            }
+            else if (str.contains("년")
+                    && !str.contains("양력") && !str.contains("음력"))
+            {
+                System.out.println(elem.toString());
+                Pattern pattern = Pattern.compile("[가-힣]{2}");
+                Matcher matcher = pattern.matcher(elem.toString());
+                while(matcher.find())
+                {
+                    gapja = matcher.group(0);
+                    ddi = gapja.substring(1);
+
+                    p.setDdi(ddi);
+                    p.setGapja(gapja);
+                    p.setCompleteInfo(true);
+                    return p;
+                }
+            }
         }
+        return null;
     }
 
     public void getZodiac(Person p)
     {
-        DateObj obj = new DateObj(p.getMonth(), p.getDay());
+        DateObj obj = new DateObj(p.getBirthday().getMonth(),
+                p.getBirthday().getDay());
         Constant.ZODIAC_MAP.forEach((key, value)->{
-            System.out.println("key : " + key);
             if(obj.compareTo(value.getStart()) >= 0 &&
                     obj.compareTo(value.getEnd()) <= 0)
             {
@@ -118,30 +201,9 @@ public class ResultActivity extends AppCompatActivity {
         });
         //염소자리일 경우 12.25 ~ 1.19는 해를 넘어가므로
         //추가 조건걸기
-        if( (p.getMonth() == 1 && p.getDay() <= 19 ) ||
-        p.getMonth() == 12 && p.getDay()>=25){
+        if( obj.getMonth() == 1 && obj.getDay() <= 19 ||
+        obj.getMonth() == 12 && obj.getDay()>=25){
             p.setZodiacSign(ZodiacType.ARIES.getName());
         }
     }
-
-    public void getKZodiac(Person p)
-    {
-        DateObj obj = new DateObj(p.getMonth(), p.getDay());
-        Constant.ZODIAC_MAP.forEach((key, value)->{
-            System.out.println("key : " + key);
-            if(obj.compareTo(value.getStart()) >= 0 &&
-                    obj.compareTo(value.getEnd()) <= 0)
-            {
-                p.setZodiacSign(key);
-            }
-
-        });
-        //염소자리일 경우 12.25 ~ 1.19는 해를 넘어가므로
-        //추가 조건걸기
-        if( (p.getMonth() == 1 && p.getDay() <= 19 ) ||
-                p.getMonth() == 12 && p.getDay()>=25){
-            p.setZodiacSign(ZodiacType.ARIES.getName());
-        }
-    }
-
 }
