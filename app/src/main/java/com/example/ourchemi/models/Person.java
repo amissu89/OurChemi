@@ -12,47 +12,31 @@ public class Person implements Serializable {
     private String gapja;
     private String mbti;
     private String zodiacSign;
-
-    @NonNull
-    @Override
-    public Person clone() {
-        try{
-            return (Person) super.clone();
-        }
-        catch(CloneNotSupportedException e)
-        {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private KZodiac kZodiac;
     private String birthStone;
     private String birthFlower;
     private boolean completeInfo;
 
-    public Person(DateObj birthday, DateObj lunarBirthday, String ddi, String gapja, String mbti, String zodiacSign, KZodiac kZodiac, String birthStone, String birthFlower, boolean completeInfo) {
+    public Person()
+    {
+        mbti = "";
+        completeInfo = false;
+        birthday = new DateObj();
+        lunarBirthday = new DateObj();
+        ddi = gapja = mbti = zodiacSign = "";
+        birthStone = birthFlower = "";
+        completeInfo = false;
+    }
+
+    public Person(DateObj birthday, DateObj lunarBirthday, String ddi, String gapja, String mbti, String zodiacSign, String birthStone, String birthFlower, boolean completeInfo) {
         this.birthday = birthday;
         this.lunarBirthday = lunarBirthday;
         this.ddi = ddi;
         this.gapja = gapja;
         this.mbti = mbti;
         this.zodiacSign = zodiacSign;
-        this.kZodiac = kZodiac;
         this.birthStone = birthStone;
         this.birthFlower = birthFlower;
         this.completeInfo = completeInfo;
-    }
-
-    public Person(){
-        mbti = "";
-        completeInfo = false;
-        birthday = new DateObj();
-        lunarBirthday = new DateObj();
-        ddi = gapja = mbti = zodiacSign = "";
-        kZodiac = new KZodiac();
-        birthStone = birthFlower = "";
-        completeInfo = false;
     }
 
     public DateObj getBirthday() {
@@ -103,14 +87,6 @@ public class Person implements Serializable {
         this.zodiacSign = zodiacSign;
     }
 
-    public KZodiac getkZodiac() {
-        return kZodiac;
-    }
-
-    public void setkZodiac(KZodiac kZodiac) {
-        this.kZodiac = kZodiac;
-    }
-
     public String getBirthStone() {
         return birthStone;
     }
@@ -135,18 +111,18 @@ public class Person implements Serializable {
         this.completeInfo = completeInfo;
     }
 
-    public void copy(Person p){
-        mbti            = p.getMbti();
-        completeInfo    = p.isCompleteInfo();
-        birthday    = p.getBirthday();
-        lunarBirthday = p.getLunarBirthday();
-        ddi = p.getDdi();
-        gapja = p.getGapja();
-        mbti = p.getMbti();
-        zodiacSign = p.getZodiacSign();
-        kZodiac = p.getkZodiac();
-        birthStone = p.getBirthStone();
-        birthFlower = p.getBirthFlower();
+    public void copyByVal(Person p)
+    {
+        this.mbti            = p.getMbti();
+        this.completeInfo    = p.isCompleteInfo();
+        this.birthday        = p.getBirthday();
+        this.lunarBirthday   = p.getLunarBirthday();
+        this.ddi             = p.getDdi();
+        this.gapja           = p.getGapja();
+        this.mbti            = p.getMbti();
+        this.zodiacSign      = p.getZodiacSign();
+        this.birthStone      = p.getBirthStone();
+        this.birthFlower     = p.getBirthFlower();
     }
 
     @Override
@@ -158,7 +134,6 @@ public class Person implements Serializable {
                 ", gapja='" + gapja + '\'' +
                 ", mbti='" + mbti + '\'' +
                 ", zodiacSign='" + zodiacSign + '\'' +
-                ", kZodiac=" + kZodiac +
                 ", birthStone='" + birthStone + '\'' +
                 ", birthFlower='" + birthFlower + '\'' +
                 ", completeInfo=" + completeInfo +

@@ -2,27 +2,33 @@ package com.example.ourchemi.models;
 
 import com.example.ourchemi.Constant;
 
+import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.Date;
 
-public class DateObj implements Comparable<DateObj> {
-    int year;
-    int month;
-    int day;
+public class DateObj implements Comparable<DateObj>, Serializable {
+    private int year;
+    private int month;
+    private int day;
 
-    public void init(){
-        year = month = day = Constant.NOK;
+    public DateObj()
+    {
+        init();
     }
+
+    public DateObj(int month, int day) {
+        this.month = month;
+        this.day = day;
+    }
+
     public DateObj(int year, int month, int day) {
         this.year = year;
         this.month = month;
         this.day = day;
     }
 
-    public DateObj()
+    public void init()
     {
-        year = month = day = Constant.NOK;
+        this.year = this.month = this.day = Constant.NOK;
     }
 
     public int getYear() {
@@ -31,11 +37,6 @@ public class DateObj implements Comparable<DateObj> {
 
     public void setYear(int year) {
         this.year = year;
-    }
-
-    public DateObj(int month, int day) {
-        this.month = month;
-        this.day = day;
     }
 
     public int getMonth() {

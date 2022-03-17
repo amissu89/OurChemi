@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">test</string>
-    <string name="me">t2</string>
+    <string name="me">나</string>
     <string name="you">너</string>
     <string name="result">결과보기</string>
     <string name="birthday">생년월일 (*필수)</string>
-    <string name="mbti">t3(*선택)</string>
+    <string name="mbti">MBTI(*선택)</string>
     <string name="ph_date">19890101</string>
     <string name="extraversion">E</string>
     <string name="introversion">I</string>

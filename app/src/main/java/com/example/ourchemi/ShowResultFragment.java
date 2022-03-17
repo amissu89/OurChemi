@@ -80,6 +80,7 @@ public class ShowResultFragment extends Fragment {
         return mParam1;
     }
 
+    // TODO: 2022-03-14
     public void setPerson(Person p1, Person p2)
     {
         String str = "p1 : " + p1.toString();
