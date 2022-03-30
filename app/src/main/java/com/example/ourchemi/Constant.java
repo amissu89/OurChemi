@@ -12,7 +12,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class Constant {
+    public static final String EType = "E";
+    public static final String IType = "I";
+    public static final String SType = "S";
+    public static final String NType = "N";
+    public static final String TType = "T";
+    public static final String FType = "F";
+    public static final String JType = "J";
+    public static final String PType = "P";
 
+    public static final int CHECKED = 1;
+    public static final int UNCHECKED = 0;
+
+    public static final int BIRTHDAY_LEN = 8;
+    public static final String CONFIG_NAME = "config.json";
     public static final int NOK = -1;
     public final static Map<String, KZodiac> DDI_MAP = new HashMap<String, KZodiac>(){
         {

@@ -55,10 +55,6 @@ public class ResultActivity extends AppCompatActivity {
         me = (Person)infos.getSerializableExtra("me");
         you = (Person)infos.getSerializableExtra("you");
         chemistry = (Chemistry)infos.getSerializableExtra("chemistry");
-        System.out.println(me.toString());
-        System.out.println(you.toString());
-        System.out.println(chemistry.toString());
-
         tabLayout = (TabLayout)findViewById(R.id.tabs);
         ViewPager2 viewPager2 = (ViewPager2)findViewById(R.id.view_pager);
 
@@ -74,16 +70,13 @@ public class ResultActivity extends AppCompatActivity {
                 {
                     case 0:
                         showResultFragment = (ShowResultFragment) pagerAdapter.getFragment(position);
-                        showResultFragment.setPerson(me, you);
-                        System.out.println(showResultFragment.getParam());
+                        showResultFragment.setPerson(me, you, chemistry);
                         break;
                     case 1:
                         bigImageFragment = (BigImageFragment) pagerAdapter.getFragment(position);
-                        System.out.println(bigImageFragment.getParam());
                         break;
                     case 2:
                         webViewFragment = (WebViewFragment) pagerAdapter.getFragment(position);
-                        System.out.println(webViewFragment.getParam());
                         break;
                     default:
                         System.out.println("default");

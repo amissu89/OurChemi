@@ -25,40 +25,46 @@
         android:layout_marginEnd="45dp"
         />
 
-    <Button
-        android:id="@+id/me_btn"
-        android:layout_width="150dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginStart="30dp"
-        android:background="@drawable/btn_custom"
-        android:fontFamily="@font/bareun_batang_b"
-        android:text="@string/me"
-        android:textColor="@color/darkblue"
-        android:textSize="50sp"
-        android:textStyle="bold"
-        android:onClick="onClickMeBtn"
-        app:layout_constraintDimensionRatio="1"
+    <RadioGroup
+        android:id="@+id/you_me_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/tv_title"
         app:layout_constraintStart_toStartOf="parent"
-         />
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="50dp"
 
-    <Button
-        android:id="@+id/you_btn"
-        android:layout_width="150dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="30dp"
-        android:background="@drawable/btn_custom"
-        android:fontFamily="@font/bareun_batang_b"
-        android:text="@string/you"
-        android:textColor="@color/darkblue"
-        android:textSize="50sp"
-        android:textStyle="bold"
-        android:onClick="onClickYouBtn"
-        app:layout_constraintDimensionRatio="1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_me"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:background="@drawable/selector_radio_button"
+            android:button="@null"
+            android:checked="true"
+            android:text="@string/me"
+            android:textAlignment="center"
+            android:layout_marginEnd="10dp"
+            android:textSize="40sp"
+            android:textColor="@drawable/selector_radio_text"
+            android:onClick="onRadioButtonClicked_meyou"
+            />
+
+        <RadioButton
+            android:id="@+id/rb_you"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:background="@drawable/selector_radio_button"
+            android:button="@null"
+            android:checked="true"
+            android:text="@string/you"
+            android:textAlignment="center"
+            android:textSize="40sp"
+            android:textColor="@drawable/selector_radio_text"
+            android:onClick="onRadioButtonClicked_meyou"
+            />
+    </RadioGroup>
 
     <TextView
         android:id="@+id/titleTextDate"
@@ -70,7 +76,7 @@
         android:textColor="@color/darkblue"
         android:textStyle="normal"
         android:background="@color/darkyellow"
-        app:layout_constraintTop_toBottomOf="@+id/me_btn"
+        app:layout_constraintTop_toBottomOf="@+id/you_me_group"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="30dp"
         android:layout_marginStart="30dp"
@@ -231,6 +237,7 @@
         app:layout_constraintStart_toStartOf="parent"
         />
 
+
     <Button
         android:id="@+id/result_btn"
         android:layout_width="wrap_content"
@@ -247,5 +254,8 @@
         android:layout_marginBottom="30dp"
         android:onClick="showResult"
         />
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

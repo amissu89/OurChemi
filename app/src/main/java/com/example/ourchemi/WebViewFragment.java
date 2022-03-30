@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -64,7 +65,8 @@ public class WebViewFragment extends Fragment {
         // Inflate the layout for this fragment
 
         WebView webView = v.findViewById(R.id.webview);
-        webView.loadUrl("https://kr.trip.com/travel-restrictions-covid-19/europe-russia/");
+        webView.setWebViewClient(new WebViewClient());
+        webView.loadUrl("https://www.sac.or.kr/site/main/home");
         return v;
     }
 

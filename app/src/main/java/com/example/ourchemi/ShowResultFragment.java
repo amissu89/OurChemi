@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.ourchemi.models.Chemistry;
 import com.example.ourchemi.models.Person;
 
 /**
@@ -34,7 +35,6 @@ public class ShowResultFragment extends Fragment {
     public ShowResultFragment() {
         // Required empty public constructor
     }
-
 
     /**
      * Use this factory method to create a new instance of
@@ -81,11 +81,11 @@ public class ShowResultFragment extends Fragment {
     }
 
     // TODO: 2022-03-14
-    public void setPerson(Person p1, Person p2)
+    public void setPerson(Person p1, Person p2, Chemistry chemistry)
     {
         String str = "p1 : " + p1.toString();
         str += " p2 : " + p2.toString();
-        System.out.println(str);
+        str += " chemistry : " + chemistry.toString();
         TextView tv = (TextView)getView().findViewById(R.id.myinfo);
         tv.setText(str);
     }

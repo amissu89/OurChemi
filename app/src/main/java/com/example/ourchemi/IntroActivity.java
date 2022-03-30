@@ -22,7 +22,7 @@ public class IntroActivity extends AppCompatActivity {
                 startActivity(intent); //뒤로가기 했을 때 다시 안나오게 >>finish!!
                 finish();
             }
-        },5000);
+        },100);
     }
 
     @Override
