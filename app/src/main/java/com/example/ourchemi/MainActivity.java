@@ -1,12 +1,17 @@
 package com.example.ourchemi;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.BaseColumns;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.util.Linkify;
@@ -27,6 +32,8 @@ import com.example.ourchemi.interfaces.ChemResultEvent;
 import com.example.ourchemi.models.Chemistry;
 import com.example.ourchemi.models.DateObj;
 import com.example.ourchemi.models.Person;
+import com.example.ourchemi.repository.DBHelper;
+import com.example.ourchemi.repository.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.jsoup.Jsoup;
@@ -64,10 +71,15 @@ public class MainActivity extends AppCompatActivity implements ChemResultEvent {
 
     ActivityResultLauncher<Intent> startActivityResult;
 
+    @SuppressLint("Range")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        DBHelper dbHelper = new DBHelper(getApplicationContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        dbHelper.onUpgrade(db,0, 0);
 
         //저장된 파일이 있었다면
         try {
@@ -76,11 +88,47 @@ public class MainActivity extends AppCompatActivity implements ChemResultEvent {
                 me = chemistry.getP1();
                 you = chemistry.getP2();
                 initViewItem(me);
-                ((RadioButton)findViewById(R.id.rb_me)).setChecked(true);
+                ((RadioButton) findViewById(R.id.rb_me)).setChecked(true);
+
+                dbHelper.insertColumn(db, "me", me.getMbti(), me.getDdi(), me.getGapja(),
+                        me.getZodiacSign());
             }
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+
+        String[] projection = {
+                User.UserEntry.COL_ID,
+                User.UserEntry.COL_NAME,
+                User.UserEntry.COL_MBTI
+        };
+
+        String selection = User.UserEntry.COL_NAME + " = ? ";
+        String[] selectionArgs = {"me"};
+
+        String sortOrder = User.UserEntry.COL_NAME + " DESC";
+
+        Cursor cursor = db.query(
+                User.UserEntry.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+
+        try {
+            while(cursor.moveToNext())
+            {
+                System.out.println("CURSOR : " + cursor.getString(cursor.getColumnIndex(User.UserEntry.COL_MBTI)));
+            }
+        } catch (Exception e)
+            {
+                System.out.println(e.getMessage());
+            }
+
+
 
         if(me == null || you == null)
         {
@@ -181,36 +229,10 @@ public class MainActivity extends AppCompatActivity implements ChemResultEvent {
         try {
             CommonAPI.saveThisStateToFile(getApplicationContext(), chemistry);
         } catch (JsonProcessingException e) {
+
             e.printStackTrace();
         }
     }
-
-    /*
-    public void saveThisStateToFile() throws JsonProcessingException {
-
-        File file = new File(getApplicationContext().getFilesDir(), Constant.CONFIG_NAME);
-
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        ObjectMapper chemiMapper = new ObjectMapper();
-        String chemiStr = chemiMapper.writeValueAsString(chemistry);
-        byte[] bytesArray = chemiStr.getBytes(StandardCharsets.UTF_8);
-        Context cxt = getApplicationContext();
-
-        try (FileOutputStream fos = cxt.openFileOutput(file.getName(), Context.MODE_PRIVATE)) {
-            fos.write(bytesArray);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
 
     public void initViewItem() {
         ((EditText) findViewById(R.id.editTextDate)).setText(null);

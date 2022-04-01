@@ -44,6 +44,7 @@ public class ResultActivity extends AppCompatActivity {
     private ShowResultFragment  showResultFragment;
     private BigImageFragment    bigImageFragment;
     private WebViewFragment     webViewFragment;
+    private BlankFragment       blankFragment;
 
 
     @Override
@@ -78,13 +79,16 @@ public class ResultActivity extends AppCompatActivity {
                     case 2:
                         webViewFragment = (WebViewFragment) pagerAdapter.getFragment(position);
                         break;
+                    case 3:
+                        blankFragment = (BlankFragment) pagerAdapter.getFragment(position);
+                        break;
                     default:
                         System.out.println("default");
                 }
             }
         });
 
-        final List<String> tabElement = Arrays.asList("궁합결과", "Load Image", "WebView Text");
+        final List<String> tabElement = Arrays.asList("궁합결과", "Load Image", "WebView Text", "Blank");
 
         new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
             @Override

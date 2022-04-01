@@ -5,9 +5,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.example.ourchemi.models.Person;
-
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +15,7 @@ public class ViewPager2Adapter extends FragmentStateAdapter {
     private ShowResultFragment showResultFragment;
     private BigImageFragment bigImageFragment;
     private WebViewFragment webViewFragment;
+    private BlankFragment blankFragment;
 
      public ViewPager2Adapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
@@ -29,6 +27,9 @@ public class ViewPager2Adapter extends FragmentStateAdapter {
 
          webViewFragment = new WebViewFragment();
          fragList.add(webViewFragment);
+
+         blankFragment = new BlankFragment();
+         fragList.add(blankFragment);
     }
 
     @NonNull
@@ -45,6 +46,6 @@ public class ViewPager2Adapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 3;
+        return fragList.size();
     }
 }
