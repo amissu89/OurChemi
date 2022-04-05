@@ -13,11 +13,15 @@ public final class User {
         public static final String COL_DDI="ddi";
         public static final String COL_GAPJA="gapja";
         public static final String COL_ZODIAC="zodiac";
+        public static final String COL_BIRTHDAY="birthday";
+        public static final String COL_LUNAR_BIRTHDAY="lunarBirthday";
     }
     public static final String SQL_CREATE_ENTRIES=
             "CREATE TABLE " + UserEntry.TABLE_NAME +" (" +
                     UserEntry.COL_ID + " INTEGER PRIMARY KEY, " +
                     UserEntry.COL_NAME + " TEXT, " +
+                    UserEntry.COL_BIRTHDAY + " TEXT, " +
+                    UserEntry.COL_LUNAR_BIRTHDAY + " TEXT, " +
                     UserEntry.COL_MBTI + " TEXT, " +
                     UserEntry.COL_DDI + " TEXT, " +
                     UserEntry.COL_GAPJA + " TEXT, " +

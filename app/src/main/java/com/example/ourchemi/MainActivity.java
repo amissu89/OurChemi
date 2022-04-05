@@ -69,6 +69,8 @@ public class MainActivity extends AppCompatActivity implements ChemResultEvent {
     private String ddi;
     private String gapja;
 
+    private DBHelper dbHelper;
+    private SQLiteDatabase sqliteDb;
     ActivityResultLauncher<Intent> startActivityResult;
 
     @SuppressLint("Range")
@@ -77,61 +79,14 @@ public class MainActivity extends AppCompatActivity implements ChemResultEvent {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        DBHelper dbHelper = new DBHelper(getApplicationContext());
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        dbHelper.onUpgrade(db,0, 0);
+        dbHelper = new DBHelper(getApplicationContext());
+        sqliteDb = dbHelper.getWritableDatabase();
 
-        //저장된 파일이 있었다면
-        try {
-            chemistry = CommonAPI.readStateFromFile(getApplicationContext());
-            if (chemistry != null) {
-                me = chemistry.getP1();
-                you = chemistry.getP2();
-                initViewItem(me);
-                ((RadioButton) findViewById(R.id.rb_me)).setChecked(true);
-
-                dbHelper.insertColumn(db, "me", me.getMbti(), me.getDdi(), me.getGapja(),
-                        me.getZodiacSign());
-            }
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-        String[] projection = {
-                User.UserEntry.COL_ID,
-                User.UserEntry.COL_NAME,
-                User.UserEntry.COL_MBTI
-        };
-
-        String selection = User.UserEntry.COL_NAME + " = ? ";
-        String[] selectionArgs = {"me"};
-
-        String sortOrder = User.UserEntry.COL_NAME + " DESC";
-
-        Cursor cursor = db.query(
-                User.UserEntry.TABLE_NAME,
-                projection,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                sortOrder
-        );
-
-        try {
-            while(cursor.moveToNext())
-            {
-                System.out.println("CURSOR : " + cursor.getString(cursor.getColumnIndex(User.UserEntry.COL_MBTI)));
-            }
-        } catch (Exception e)
-            {
-                System.out.println(e.getMessage());
-            }
-
-
-
-        if(me == null || you == null)
+        me = dbHelper.selectByName(sqliteDb, "me");
+        you = dbHelper.selectByName(sqliteDb, "you");
+        if(me.isCompleteInfo() == false || you.isCompleteInfo() == false)
         {
+            dbHelper.onUpgrade(sqliteDb, 0,0);
             isExtraversion = Constant.NOK;
             isSensing = Constant.NOK;
             isIntuition = Constant.NOK;
@@ -141,6 +96,59 @@ public class MainActivity extends AppCompatActivity implements ChemResultEvent {
             you = new Person();
             pressMeBtn = false;
         }
+        else
+        {
+            calculate(me, you);
+            initViewItem(me);
+            ((RadioButton) findViewById(R.id.rb_me)).setChecked(true);
+        }
+//
+//        if(me == null || you == null)
+//        {
+//            isExtraversion = Constant.NOK;
+//            isSensing = Constant.NOK;
+//            isIntuition = Constant.NOK;
+//            isJudging = Constant.NOK;
+//
+//            me = new Person();
+//            you = new Person();
+//            pressMeBtn = false;
+//        }
+
+//        //저장된 파일이 있었다면
+//        try {
+//            chemistry = CommonAPI.readStateFromFile(getApplicationContext());
+//            if (chemistry != null) {
+//                me = chemistry.getP1();
+//                you = chemistry.getP2();
+//                initViewItem(me);
+//                ((RadioButton) findViewById(R.id.rb_me)).setChecked(true);
+//            }
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
+
+        Cursor cursor = dbHelper.getAllData(sqliteDb);
+
+        try {
+            System.out.println("Print all saved users");
+            while(cursor.moveToNext())
+            {
+                System.out.print("ID : " + cursor.getString(cursor.getColumnIndex(User.UserEntry.COL_ID)));
+                System.out.print(", NAME : " + cursor.getString(cursor.getColumnIndex(User.UserEntry.COL_NAME)));
+                System.out.print(", BIRTHDAY : " + cursor.getString(cursor.getColumnIndex(User.UserEntry.COL_BIRTHDAY)));
+                System.out.print(", LUNAR : " + cursor.getString(cursor.getColumnIndex(User.UserEntry.COL_LUNAR_BIRTHDAY)));
+                System.out.print(", MBTI : " + cursor.getString(cursor.getColumnIndex(User.UserEntry.COL_MBTI)));
+                System.out.print(", DDI : " + cursor.getString(cursor.getColumnIndex(User.UserEntry.COL_DDI)));
+                System.out.print(", GAPJA : " + cursor.getString(cursor.getColumnIndex(User.UserEntry.COL_GAPJA)));
+                System.out.println(", ZODIAC : " + cursor.getString(cursor.getColumnIndex(User.UserEntry.COL_ZODIAC)));
+            }
+        } catch (Exception e)
+            {
+                System.out.println(e.getMessage());
+            }
+
+
 
         /*if (savedInstanceState != null) {
             me = (Person) savedInstanceState.getSerializable("me");
@@ -189,7 +197,6 @@ public class MainActivity extends AppCompatActivity implements ChemResultEvent {
         });
 
 
-
         if (me.isCompleteInfo() == false && you.isCompleteInfo() == false) {
             notice.setText(getString(R.string.me) + " 버튼을 클릭하세요.");
         }
@@ -226,6 +233,9 @@ public class MainActivity extends AppCompatActivity implements ChemResultEvent {
         outState.putSerializable("you", you);
         outState.putSerializable("chemistry", chemistry);
 
+        Long res = dbHelper.insertColumn(sqliteDb, "me", me);
+        res = dbHelper.insertColumn(sqliteDb, "you", you);
+
         try {
             CommonAPI.saveThisStateToFile(getApplicationContext(), chemistry);
         } catch (JsonProcessingException e) {
@@ -243,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements ChemResultEvent {
     }
 
     public void initViewItem(Person p) {
-        if(p == null)
+        if(p.isCompleteInfo() == false)
         {
             initViewItem();
             return;
@@ -364,8 +374,9 @@ public class MainActivity extends AppCompatActivity implements ChemResultEvent {
         intent.putExtra("you", you);
         intent.putExtra("chemistry", chemistry);
         startActivityResult.launch(intent);
-    }
 
+
+    }
 
     public void calculate(Person p1, Person p2) {
         //1. mbti 궁합 계산
@@ -379,8 +390,6 @@ public class MainActivity extends AppCompatActivity implements ChemResultEvent {
         chemistry = new Chemistry(p1, p2,
                 mbti_res, zodiac_res, kzodiac_res, res);
     }
-
-
 
     public Person getKZodiac(Person p) throws IOException {
 
@@ -447,8 +456,6 @@ public class MainActivity extends AppCompatActivity implements ChemResultEvent {
     }
 
     public void onRadioButtonClicked_meyou(View view){
-        boolean checked = ((RadioButton)view).isChecked();
-        String mbti ="";
         birthDay = (EditText) findViewById(R.id.editTextDate);
 
         if( !CommonAPI.validation(birthDay.getText().toString(),

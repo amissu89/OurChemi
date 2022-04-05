@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 public class Person implements Serializable {
 
+    private String name;
     private DateObj birthday;
     private DateObj lunarBirthday;
     private String ddi;
@@ -18,7 +19,7 @@ public class Person implements Serializable {
 
     public Person()
     {
-        mbti = "";
+        mbti = name = "";
         completeInfo = false;
         birthday = new DateObj();
         lunarBirthday = new DateObj();
@@ -27,7 +28,8 @@ public class Person implements Serializable {
         completeInfo = false;
     }
 
-    public Person(DateObj birthday, DateObj lunarBirthday, String ddi, String gapja, String mbti, String zodiacSign, String birthStone, String birthFlower, boolean completeInfo) {
+    public Person(String name, DateObj birthday, DateObj lunarBirthday, String ddi, String gapja, String mbti, String zodiacSign, String birthStone, String birthFlower, boolean completeInfo) {
+        this.name     = name;
         this.birthday = birthday;
         this.lunarBirthday = lunarBirthday;
         this.ddi = ddi;
@@ -111,8 +113,17 @@ public class Person implements Serializable {
         this.completeInfo = completeInfo;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public void copyByVal(Person p)
     {
+        this.name            = p.getName();
         this.mbti            = p.getMbti();
         this.completeInfo    = p.isCompleteInfo();
         this.birthday        = p.getBirthday();
@@ -128,7 +139,8 @@ public class Person implements Serializable {
     @Override
     public String toString() {
         return "Person{" +
-                "birthday=" + birthday +
+                "name=" + name +
+                ", birthday=" + birthday +
                 ", lunarBirthday=" + lunarBirthday +
                 ", ddi='" + ddi + '\'' +
                 ", gapja='" + gapja + '\'' +
