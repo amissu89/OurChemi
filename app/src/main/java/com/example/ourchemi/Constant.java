@@ -142,4 +142,5 @@ public final class Constant {
     };
 
     public final static String DDI_REQ_URL = "https://superkts.com/cal/solar_lunar/";
+    public final static String MBTI_LINK = "https://www.16personalities.com/free-personality-test";
 }

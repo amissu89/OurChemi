@@ -219,15 +219,17 @@
         app:layout_constraintTop_toBottomOf="@+id/rg_jp"
         app:layout_constraintStart_toStartOf="parent"
         />
-    <TextView
-        android:id="@+id/tv_mtbi_link"
+
+
+    <Button
+        android:id="@+id/mtbi_test_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/bareun_batang_m"
         android:textSize="20sp"
         android:textColor="@color/darkblue"
         android:textStyle="normal"
-        android:text="링크"
+        android:text="@string/mbti_test"
         android:background="@color/darkyellow"
         android:layout_marginStart="30dp"
         android:layout_marginTop="30dp"
@@ -235,8 +237,8 @@
         android:autoLink="web"
         app:layout_constraintTop_toBottomOf="@+id/tv_notice"
         app:layout_constraintStart_toStartOf="parent"
+        android:onClick="visitMBTITest"
         />
-
 
     <Button
         android:id="@+id/result_btn"
@@ -254,8 +256,5 @@
         android:layout_marginBottom="30dp"
         android:onClick="showResult"
         />
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

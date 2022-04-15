@@ -7,11 +7,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.BaseColumns;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.util.Linkify;
@@ -32,6 +31,8 @@ import com.example.ourchemi.interfaces.ChemResultEvent;
 import com.example.ourchemi.models.Chemistry;
 import com.example.ourchemi.models.DateObj;
 import com.example.ourchemi.models.Person;
+import com.example.ourchemi.observer.PersonInfo;
+import com.example.ourchemi.observer.Publisher;
 import com.example.ourchemi.repository.DBHelper;
 import com.example.ourchemi.repository.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements ChemResultEvent {
     private DBHelper dbHelper;
     private SQLiteDatabase sqliteDb;
     ActivityResultLauncher<Intent> startActivityResult;
+    private Publisher publisher;
 
     @SuppressLint("Range")
     @Override
@@ -84,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements ChemResultEvent {
 
         me = dbHelper.selectByName(sqliteDb, "me");
         you = dbHelper.selectByName(sqliteDb, "you");
+
         if(me.isCompleteInfo() == false || you.isCompleteInfo() == false)
         {
             dbHelper.onUpgrade(sqliteDb, 0,0);
@@ -101,7 +104,12 @@ public class MainActivity extends AppCompatActivity implements ChemResultEvent {
             calculate(me, you);
             initViewItem(me);
             ((RadioButton) findViewById(R.id.rb_me)).setChecked(true);
+            pressMeBtn = true;
         }
+
+        publisher= new Publisher();
+        publisher.attach(new PersonInfo(me));
+        publisher.attach(new PersonInfo(you));
 //
 //        if(me == null || you == null)
 //        {
@@ -116,13 +124,14 @@ public class MainActivity extends AppCompatActivity implements ChemResultEvent {
 //        }
 
 //        //저장된 파일이 있었다면
-//        try {
-//            chemistry = CommonAPI.readStateFromFile(getApplicationContext());
-//            if (chemistry != null) {
-//                me = chemistry.getP1();
-//                you = chemistry.getP2();
-//                initViewItem(me);
-//                ((RadioButton) findViewById(R.id.rb_me)).setChecked(true);
+////        try {
+//
+////            chemistry = CommonAPI.readStateFromFile(getApplicationContext());
+////            if (chemistry != null) {
+////                me = chemistry.getP1();
+////                you = chemistry.getP2();
+////                initViewItem(me);
+////                ((RadioButton) findViewById(R.id.rb_me)).setChecked(true);
 //            }
 //        } catch (JsonProcessingException e) {
 //            e.printStackTrace();
@@ -183,8 +192,10 @@ public class MainActivity extends AppCompatActivity implements ChemResultEvent {
 
                 if (pressMeBtn == true) {
                     me.setBirthday(new DateObj(year, month, day));
+                    publisher.notifyObserverList(me);
                 } else {
                     you.setBirthday(new DateObj(year, month, day));
+                    publisher.notifyObserverList(you);
                 }
                 notice.setText("MBTI를 선택하세요");
                 checkInputValidAll();
@@ -196,22 +207,9 @@ public class MainActivity extends AppCompatActivity implements ChemResultEvent {
             }
         });
 
-
         if (me.isCompleteInfo() == false && you.isCompleteInfo() == false) {
             notice.setText(getString(R.string.me) + " 버튼을 클릭하세요.");
         }
-
-        Pattern pattern = Pattern.compile("링크");
-        Linkify.TransformFilter transformFilter = new Linkify.TransformFilter() {
-            @Override
-            public String transformUrl(Matcher matcher, String s) {
-                return "";
-            }
-        };
-        TextView tv_link = (TextView) findViewById(R.id.tv_mtbi_link);
-        tv_link.setText("링크");
-
-        Linkify.addLinks(tv_link, pattern, "https://www.16personalities.com/free-personality-test", null, transformFilter);
 
         startActivityResult = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -233,8 +231,20 @@ public class MainActivity extends AppCompatActivity implements ChemResultEvent {
         outState.putSerializable("you", you);
         outState.putSerializable("chemistry", chemistry);
 
-        Long res = dbHelper.insertColumn(sqliteDb, "me", me);
-        res = dbHelper.insertColumn(sqliteDb, "you", you);
+        Long res = -1L;
+        if(dbHelper.isExistByName(sqliteDb, "me")) {
+            res = dbHelper.updateColumnByName(sqliteDb,"me", me);
+        }
+        else{
+            res = dbHelper.insertColumn(sqliteDb, "me", me);
+        }
+
+        if(dbHelper.isExistByName(sqliteDb, "you")) {
+            res = dbHelper.updateColumnByName(sqliteDb,"you", you);
+        }
+        else{
+            res = dbHelper.insertColumn(sqliteDb, "you", you);
+        }
 
         try {
             CommonAPI.saveThisStateToFile(getApplicationContext(), chemistry);
@@ -365,6 +375,11 @@ public class MainActivity extends AppCompatActivity implements ChemResultEvent {
         });
     }
 
+    public void visitMBTITest(View view){
+        Intent link = new Intent(Intent.ACTION_VIEW, Uri.parse(Constant.MBTI_LINK));
+        startActivity(link);
+    }
+
     @Override
     public void onResult() {
         // Do something in response to button click
@@ -374,8 +389,6 @@ public class MainActivity extends AppCompatActivity implements ChemResultEvent {
         intent.putExtra("you", you);
         intent.putExtra("chemistry", chemistry);
         startActivityResult.launch(intent);
-
-
     }
 
     public void calculate(Person p1, Person p2) {

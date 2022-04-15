@@ -66,12 +66,12 @@ public class ResultActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                System.out.println("onPageSelected : " + position );
                 switch(position)
                 {
                     case 0:
                         showResultFragment = (ShowResultFragment) pagerAdapter.getFragment(position);
                         showResultFragment.setPerson(me, you, chemistry);
+                        showResultFragment.showResult();
                         break;
                     case 1:
                         bigImageFragment = (BigImageFragment) pagerAdapter.getFragment(position);
@@ -93,7 +93,6 @@ public class ResultActivity extends AppCompatActivity {
         new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
             @Override
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                System.out.println("onConfigureTab : " + position);
                 TextView textview = new TextView(ResultActivity.this);
                 textview.setText(tabElement.get(position));
                 tab.setCustomView(textview);

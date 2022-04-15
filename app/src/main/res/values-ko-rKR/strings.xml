@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">test</string>
+    <string name="app_name">우리 궁합</string>
     <string name="me">나</string>
     <string name="you">너</string>
     <string name="result">결과보기</string>
@@ -27,4 +27,6 @@
     <string name="capricorn">염소자리</string>
     <string name="aquarius">물병자리</string>
     <string name="pisces">물고기자리</string>
+    <string name="mbti_test">MBTI 테스트 바로가기</string>
+    <string name="img_result">결과 점수에 따른 이미지</string>
 </resources>

@@ -35,7 +35,6 @@ public class ViewPager2Adapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-         System.out.println("pos : " + position);
          return fragList.get(position);
     }
 

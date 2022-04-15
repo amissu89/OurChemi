@@ -61,6 +61,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Person p = new Person();
         p.setCompleteInfo(false);
         while(cursor.moveToNext()) {
+            System.out.println("name : " +  name);
             p.setName(cursor.getString(cursor.getColumnIndexOrThrow(User.UserEntry.COL_NAME)));
             p.setMbti(cursor.getString(cursor.getColumnIndexOrThrow(User.UserEntry.COL_MBTI)));
             p.setDdi(cursor.getString(cursor.getColumnIndexOrThrow(User.UserEntry.COL_DDI)));
@@ -68,10 +69,12 @@ public class DBHelper extends SQLiteOpenHelper {
             p.setZodiacSign(cursor.getString(cursor.getColumnIndexOrThrow(User.UserEntry.COL_ZODIAC)));
 
             String dateStr = cursor.getString(cursor.getColumnIndexOrThrow(User.UserEntry.COL_BIRTHDAY));
+            System.out.println("datestr["+dateStr+"]");
             p.setBirthday(CommonAPI.getDateObjFromEditText(dateStr));
             dateStr = cursor.getString(cursor.getColumnIndexOrThrow(User.UserEntry.COL_LUNAR_BIRTHDAY));
             p.setLunarBirthday(CommonAPI.getDateObjFromEditText(dateStr));
             p.setCompleteInfo(true);
+
         }
 
 
@@ -94,11 +97,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return sqLiteDatabase.insert(User.UserEntry.TABLE_NAME, null, value);
     }
 
-    public int updateColumnByName(SQLiteDatabase db, String name, Person p)
+    public long updateColumnByName(SQLiteDatabase db, String name, Person p)
     {
         String where = User.UserEntry.COL_NAME + " = ? ";
         ContentValues value = new ContentValues();
         value.put(User.UserEntry.COL_NAME,  name);
+        value.put(User.UserEntry.COL_BIRTHDAY, p.getBirthday().toString());
+        value.put(User.UserEntry.COL_LUNAR_BIRTHDAY, p.getLunarBirthday().toString());
         value.put(User.UserEntry.COL_MBTI,  p.getMbti());
         value.put(User.UserEntry.COL_DDI,   p.getDdi());
         value.put(User.UserEntry.COL_GAPJA, p.getGapja());
@@ -108,5 +113,28 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Cursor getAllData(SQLiteDatabase db){
         return db.rawQuery("select * from " + User.UserEntry.TABLE_NAME, null);
+    }
+
+    public boolean isExistByName(SQLiteDatabase db, String name){
+        String[] projection = {
+                User.UserEntry.COL_ID,
+                User.UserEntry.COL_NAME,
+        };
+
+        String selection = User.UserEntry.COL_NAME + " = ? ";
+        String[] selectionArgs = {name};
+
+        Cursor cursor = db.query(User.UserEntry.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,null,null);
+
+        boolean isExist = false;
+        while(cursor.moveToNext()) {
+            isExist = true;
+        }
+
+        return isExist;
     }
 }
